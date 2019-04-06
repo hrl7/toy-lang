@@ -1,5 +1,30 @@
 const debug = require("debug")("parser");
 const { TK_TYPES, ND_TYPES } = require("./constants");
+
+/*
+syntax
+
+stmt: cmp ';' stmt
+stmt: ''
+
+cmp: add '==' add
+cmp: add '!=' add
+cmp: add
+
+add: assign '+' add
+add: assign
+
+assign: mul '=' add
+assign: mul
+
+mul: term '*' mul
+mul: term
+
+term: '(' add ')'
+term: [0-9]* //number
+term: IDENTIFIER
+
+*/
 const parse = tks => {
   const consume = tokenType => {
     debug(`try consume: ${tokenType}, got tks[${i}]: ${tks[i] && tks[i].type}`);
