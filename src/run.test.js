@@ -26,6 +26,13 @@ tests = {
   "1 + 2 != 0": true,
   "a = 0; b= 1; a == b": false,
   "a = 0; b= 1; a + b == b": true,
+  "a = 0; if (1 == 0) { a = 1; } a;": 0,
+  "a = 0; if (1 == 1) { a = 1; } a;": 1,
+  "a = 0; if (a == 1) { a = 1; } a;": 0,
+  "a = 1; if (a == 1) { a = 0; } a;": 0,
+  "a = 0; if (1 == 0) { a = 1; } else { a = 10; } a;": 10,
+  "a = 0; if (1 == 1) { a = 1; } else { a = 10; } a;": 1,
+  "a = 0; if (1 == 1) a = 1; else a = 10;  a;": 1,
 };
 
 Object.keys(tests).forEach(t => {

@@ -4,8 +4,15 @@ const { TK_TYPES, ND_TYPES } = require("./constants");
 /*
 syntax
 
+program: stmt
+
+stmt: 'if' '(' cmp ')' stmt 
+stmt: 'if' '(' cmp ')' stmt else  stmt 
+stmt: block stmt
 stmt: cmp ';' stmt
 stmt: ''
+
+blcok: '{' stmt '}'
 
 cmp: add '==' add
 cmp: add '!=' add
@@ -36,10 +43,20 @@ const parse = tks => {
     return false;
   };
 
-  const unexpectedTokenError = () => {
-    console.error(`got unexpected token ${JSON.stringify(tks[i])}`);
+  const unexpectedTokenError = expected => {
+    if (expected) {
+      console.error(
+        `expected ${expected}, got unexpected token ${JSON.stringify(tks[i])}`
+      );
+    } else {
+      console.error(`got unexpected token ${JSON.stringify(tks[i])}`);
+    }
     console.trace();
-    process.exit(1);
+    throw new Error("got unexpected token");
+  };
+
+  const consumeAndAssert = tokenType => {
+    if (!consume(tokenType)) unexpectedTokenError(tokenType);
   };
 
   const term = () => {
@@ -106,14 +123,41 @@ const parse = tks => {
     }
     return lhs;
   };
+
+  const stmt = () => {
+    if (consume(TK_TYPES.IF)) {
+      consumeAndAssert(TK_TYPES.LPAREN);
+      const cond = cmp();
+      consumeAndAssert(TK_TYPES.RPAREN);
+      const first = stmt();
+      let second;
+      if (consume(TK_TYPES.ELSE)) {
+        second = stmt();
+      }
+      return { type: ND_TYPES.IF, cond: cond, first: first, second: second };
+    }
+
+    if (consume(TK_TYPES.LBRACKET)) {
+      const nodes = [];
+      while (!consume(TK_TYPES.RBRACKET)) {
+        nodes.push(stmt());
+      }
+      return { type: ND_TYPES.BLOCK, nodes: nodes };
+    }
+
+    const node = cmp();
+    if (tks[i] == null) return node;
+    consumeAndAssert(TK_TYPES.SEMI);
+    return node;
+  };
+
   const nodes = [];
   let i = 0;
   while (i < tks.length) {
     const tk = tks[i];
-    const node = cmp();
+    const node = stmt();
     nodes.push(node);
     if (tks[i] == null) break;
-    if (!consume(TK_TYPES.SEMI)) unexpectedTokenError();
   }
   return nodes;
 };

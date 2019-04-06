@@ -57,6 +57,22 @@ const evaluate = nodes => {
         }
         return JS_OBJ.TRUE;
       }
+      case ND_TYPES.IF: {
+        if (evalNode(env, node.cond) === JS_OBJ.TRUE) {
+          return evalNode(env, node.first);
+        } else if (node.second) {
+          return evalNode(env, node.second);
+        }
+        return JS_OBJ.UNDEFINED;
+      }
+      case ND_TYPES.BLOCK: {
+        let j = 0;
+        while (j < node.nodes.length) {
+          evalNode(env, node.nodes[j]);
+          j++;
+        }
+        return JS_OBJ.UNDEFINED;
+      }
       case ND_TYPES.ASSIGN: {
         const ident = evalLValue(env, node.left);
         const value = evalNode(env, node.right);

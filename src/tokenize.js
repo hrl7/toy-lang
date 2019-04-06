@@ -30,7 +30,11 @@ const tokenize = src => {
         c = src[i];
       }
 
-      tokens.push(createIdent(buf));
+      if (TK_CONST_KEYS.indexOf(buf) !== -1) {
+        tokens.push({ type: TK_CONSTS[buf] });
+      } else {
+        tokens.push(createIdent(buf));
+      }
       continue;
     }
 
