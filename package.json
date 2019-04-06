@@ -4,13 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-		"fix": "prettier --trailing-comma es5 --write \"src/*.js\" \"__tests__/*.js\" index.js",
-		"test": "jest"
+    "fix": "prettier --trailing-comma es5 --write \"src/*.js\" \"__tests__/*.js\" index.js",
+    "test": "jest"
   },
   "author": "Kentaro Teramoto <hrlclb@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "jest": "^24.7.1",
     "prettier": "^1.16.4"
+  },
+  "dependencies": {
+    "debug": "^4.1.1"
   }
 }

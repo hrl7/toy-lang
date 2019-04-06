@@ -1,8 +1,11 @@
+const debug = require("debug")("parser");
 const { TK_TYPES, ND_TYPES } = require("./constants");
 const parse = tks => {
   const consume = tokenType => {
+    debug(`try consume: ${tokenType}, got tks[${i}]: ${tks[i] && tks[i].type}`);
     if (tks[i] != null && tks[i].type === tokenType) {
       i++;
+      debug(`consumed: ${tokenType}, next tks[${i}]: ${tks[i] && tks[i].type}`);
       return true;
     }
     return false;
@@ -10,24 +13,30 @@ const parse = tks => {
 
   const unexpectedTokenError = () => {
     console.error(`got unexpected token ${JSON.stringify(tks[i])}`);
+    console.trace();
     process.exit(1);
   };
-  const num = () => {
-    const tk = tks[i];
-    if (consume(TK_TYPES.NUMBER)) {
-      return { type: ND_TYPES.NUMBER, value: tk.value };
-    }
-    unexpectedTokenError();
-  };
+
   const term = () => {
+    debug(`term: tks[${i}]: ${tks[i].type}`);
     if (consume(TK_TYPES.LPAREN)) {
       const node = add();
       if (!consume(TK_TYPES.RPAREN)) unexpectedTokenError();
       return node;
     }
-    return num();
+    const tk = tks[i];
+    if (consume(TK_TYPES.NUMBER)) {
+      debug("term: number found");
+      return { type: ND_TYPES.NUMBER, value: tk.value };
+    }
+    if (consume(TK_TYPES.IDENT)) {
+      debug("term: ident found");
+      return { type: ND_TYPES.IDENT, name: tk.value };
+    }
+    unexpectedTokenError();
   };
   const mul = () => {
+    debug(`mul: tks[${i}]: ${tks[i].type}`);
     const lhs = term();
     if (lhs == null) unexpectedTokenError();
     if (consume(TK_TYPES.OP_MUL)) {
@@ -37,8 +46,17 @@ const parse = tks => {
     }
     return lhs;
   };
-  const add = () => {
+  const assign = () => {
     const lhs = mul();
+    if (consume(TK_TYPES.ASSIGN)) {
+      const rhs = assign();
+      return { type: ND_TYPES.ASSIGN, right: rhs, left: lhs };
+    }
+    return lhs;
+  };
+  const add = () => {
+    debug(`add: tks[${i}]: ${tks[i].type}`);
+    const lhs = assign();
     if (lhs == null) unexpectedTokenError();
     if (consume(TK_TYPES.OP_ADD)) {
       const rhs = add();
@@ -53,7 +71,8 @@ const parse = tks => {
     const tk = tks[i];
     const node = add();
     nodes.push(node);
-    i++;
+    if (tks[i] == null) break;
+    if (!consume(TK_TYPES.SEMI)) unexpectedTokenError();
   }
   return nodes;
 };
