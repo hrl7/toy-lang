@@ -68,6 +68,18 @@ const tokenize = src => {
       continue;
     }
 
+    if (c === "+" && src[i + 1] === "+") {
+      tokens.push({ type: TK_TYPES.INC });
+      i += 2;
+      continue;
+    }
+
+    if (c === "-" && src[i + 1] === "-") {
+      tokens.push({ type: TK_TYPES.DEC });
+      i += 2;
+      continue;
+    }
+
     if (TK_CONST_KEYS.indexOf(c) !== -1) {
       tokens.push({ type: TK_CONSTS[c] });
       i++;

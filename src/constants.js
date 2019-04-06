@@ -16,6 +16,8 @@ const TK_TYPES = genConst("TK", [
   "FOR",
   "LBRACKET",
   "RBRACKET",
+  "INC",
+  "DEC",
 ]);
 
 const TK_CONSTS = {
@@ -45,6 +47,8 @@ const ND_TYPES = genConst("ND", [
   "WHILE",
   "FOR",
   "BLOCK",
+  "DEC",
+  "INC",
 ]);
 
 const JS_TYPES = genConst("JS", [

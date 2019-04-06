@@ -87,6 +87,20 @@ const evaluate = nodes => {
         }
         return value;
       }
+      case ND_TYPES.INC: {
+        const ident = evalLValue(env, node.target);
+        const value = get(env, ident);
+        const prevVal = value.value;
+        value.value++;
+        return JS_OBJ.numberObject(prevVal);
+      }
+      case ND_TYPES.DEC: {
+        const ident = evalLValue(env, node.target);
+        const value = get(env, ident);
+        const prevVal = value.value;
+        value.value--;
+        return JS_OBJ.numberObject(prevVal);
+      }
       default:
         unexpectedNodeError(node);
     }

@@ -29,6 +29,8 @@ mul: term
 
 term: '(' add ')'
 term: [0-9]* //number
+term: IDENTIFIER '++'
+term: IDENTIFIER '--'
 term: IDENTIFIER
 
 */
@@ -73,7 +75,14 @@ const parse = tks => {
     }
     if (consume(TK_TYPES.IDENT)) {
       debug("term: ident found");
-      return { type: ND_TYPES.IDENT, name: tk.value };
+      const node = { type: ND_TYPES.IDENT, name: tk.value };
+      if (consume(TK_TYPES.INC)) {
+        return { type: ND_TYPES.INC, target: node };
+      }
+      if (consume(TK_TYPES.DEC)) {
+        return { type: ND_TYPES.DEC, target: node };
+      }
+      return node;
     }
     unexpectedTokenError();
   };
