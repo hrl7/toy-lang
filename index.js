@@ -4,12 +4,23 @@ const genConst = (prefix, consts) => {
   }, {});
 };
 
-const TK_TYPES = genConst("TK", ["NUMBER", "OP_ADD", "OP_MUL"]);
+const TK_TYPES = genConst("TK", [
+  "NUMBER",
+  "OP_ADD",
+  "OP_MUL",
+  "LPAREN",
+  "RPAREN",
+]);
+const TK_CONSTS = {
+  "*": TK_TYPES.OP_MUL,
+  "+": TK_TYPES.OP_ADD,
+  "(": TK_TYPES.LPAREN,
+  ")": TK_TYPES.RPAREN,
+};
+const TK_CONST_KEYS = Object.keys(TK_CONSTS);
 
 const tokenize = src => {
   const createNumber = n => ({ type: TK_TYPES.NUMBER, value: parseInt(n) });
-  const mul = () => ({ type: TK_TYPES.OP_MUL });
-  const add = () => ({ type: TK_TYPES.OP_ADD });
 
   let i = 0;
   const tokens = [];
@@ -23,14 +34,8 @@ const tokenize = src => {
       continue;
     }
 
-    if (c === "*") {
-      tokens.push(mul());
-      i++;
-      continue;
-    }
-
-    if (c === "+") {
-      tokens.push(add());
+    if (TK_CONST_KEYS.indexOf(c) !== -1) {
+      tokens.push({ type: TK_CONSTS[c] });
       i++;
       continue;
     }
@@ -63,9 +68,17 @@ const parse = tks => {
     }
     unexpectedTokenError();
   };
+  const term = () => {
+    if (consume(TK_TYPES.LPAREN)) {
+      const node = add();
+      if (!consume(TK_TYPES.RPAREN)) unexpectedTokenError();
+      return node;
+    }
+    return num();
+  };
   const mul = () => {
     console.log(`mul: ${i}`);
-    const lhs = num();
+    const lhs = term();
     if (lhs == null) unexpectedTokenError();
     if (consume(TK_TYPES.OP_MUL)) {
       const rhs = mul();
