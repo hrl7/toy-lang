@@ -14,7 +14,6 @@ const parse = tks => {
   };
   const num = () => {
     const tk = tks[i];
-    console.log(`num: ${i}, ${tk.type}`);
     if (consume(TK_TYPES.NUMBER)) {
       return { type: ND_TYPES.NUMBER, value: tk.value };
     }
@@ -29,7 +28,6 @@ const parse = tks => {
     return num();
   };
   const mul = () => {
-    console.log(`mul: ${i}`);
     const lhs = term();
     if (lhs == null) unexpectedTokenError();
     if (consume(TK_TYPES.OP_MUL)) {
@@ -40,7 +38,6 @@ const parse = tks => {
     return lhs;
   };
   const add = () => {
-    console.log(`add: ${i}`);
     const lhs = mul();
     if (lhs == null) unexpectedTokenError();
     if (consume(TK_TYPES.OP_ADD)) {

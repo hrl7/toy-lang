@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-		"fix": "prettier --trailing-comma es5 --write \"src/*.js\" \"__tests__/*.js\" index.js"
+		"fix": "prettier --trailing-comma es5 --write \"src/*.js\" \"__tests__/*.js\" index.js",
+		"test": "jest"
   },
   "author": "Kentaro Teramoto <hrlclb@gmail.com>",
   "license": "ISC",
