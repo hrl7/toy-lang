@@ -1,0 +1,15 @@
+{
+  "name": "toy-lang",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+		"fix": "prettier --trailing-comma es5 --write \"src/*.js\" \"__tests__/*.js\" index.js"
+  },
+  "author": "Kentaro Teramoto <hrlclb@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^24.7.1",
+    "prettier": "^1.16.4"
+  }
+}
