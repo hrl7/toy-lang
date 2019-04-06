@@ -20,11 +20,29 @@ const TK_CONSTS = {
 };
 const TK_CONST_KEYS = Object.keys(TK_CONSTS);
 
-const ND_TYPES = genConst("ND", ["NUMBER", "ADD", "MUL", "ASSIGN", "IDENT"]);
+const ND_TYPES = genConst("ND", [
+  "NUMBER",
+  "ADD",
+  "MUL",
+  "ASSIGN",
+  "IDENT",
+  "EQ",
+  "NEQ",
+]);
 
+const JS_TYPES = genConst("JS", [
+  "NUMBER",
+  "BOOLEAN",
+  "STRING",
+  "FUNCTION",
+  "OBJECT",
+  "UNDEFINED",
+  "NULL",
+]);
 module.exports = {
   TK_TYPES: TK_TYPES,
   TK_CONSTS: TK_CONSTS,
   TK_CONST_KEYS: TK_CONST_KEYS,
   ND_TYPES: ND_TYPES,
+  JS_TYPES: JS_TYPES,
 };

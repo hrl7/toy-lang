@@ -65,11 +65,27 @@ const parse = tks => {
     }
     return lhs;
   };
+  const cmp = () => {
+    debug(`cmp: tks[${i}]: ${tks[i].type}`);
+    const lhs = add();
+    if (lhs == null) unexpectedTokenError();
+    if (consume(TK_TYPES.EQ)) {
+      const rhs = add();
+      if (rhs == null) unexpectedTokenError();
+      return { type: ND_TYPES.EQ, right: rhs, left: lhs };
+    }
+    if (consume(TK_TYPES.NEQ)) {
+      const rhs = add();
+      if (rhs == null) unexpectedTokenError();
+      return { type: ND_TYPES.NEQ, right: rhs, left: lhs };
+    }
+    return lhs;
+  };
   const nodes = [];
   let i = 0;
   while (i < tks.length) {
     const tk = tks[i];
-    const node = add();
+    const node = cmp();
     nodes.push(node);
     if (tks[i] == null) break;
     if (!consume(TK_TYPES.SEMI)) unexpectedTokenError();

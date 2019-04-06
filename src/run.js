@@ -1,6 +1,7 @@
 const tokenize = require("./tokenize");
 const parse = require("./parse");
 const evaluate = require("./evaluate");
+const { display } = require("./object");
 
 const run = (src, opts) => {
   opts = opts || {};
@@ -20,13 +21,13 @@ const run = (src, opts) => {
     console.log(JSON.stringify(nodes, null, 2));
     console.log("-------\nEval");
     const result = evaluate(nodes);
-    console.log(`=> ${result}`);
-    return result;
+    console.log(`=> ${display(result)}`);
+    return result.value;
   } else {
     const tokens = tokenize(src);
     const nodes = parse(tokens);
     const result = evaluate(nodes);
-    return result;
+    return result.value;
   }
 };
 

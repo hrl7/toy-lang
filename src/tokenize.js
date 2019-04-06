@@ -51,6 +51,7 @@ const tokenize = src => {
       i++;
       if (src[i] === "=") {
         tokens.push({ type: TK_TYPES.EQ });
+        i++;
         continue;
       }
       tokens.push({ type: TK_TYPES.ASSIGN });

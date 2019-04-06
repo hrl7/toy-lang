@@ -16,8 +16,16 @@ tests = {
   "a = 10; a * a": 100,
   "a = 10; a * (a + a)": 200,
   "a = 1; b = 2; c= 3; a + b + c": 6,
-	"hogepyio = 3": 3,
-	"Hoge_Piyo=2; Hoge_Piyo * 5": 10,
+  "hogepyio = 3": 3,
+  "Hoge_Piyo=2; Hoge_Piyo * 5": 10,
+  "1 == 0": false,
+  "1 == 1": true,
+  "1 + 2 + 3 == 6 ": true,
+  "1 != 1": false,
+  "1 != 0": true,
+  "1 + 2 != 0": true,
+  "a = 0; b= 1; a == b": false,
+  "a = 0; b= 1; a + b == b": true,
 };
 
 Object.keys(tests).forEach(t => {

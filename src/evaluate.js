@@ -1,5 +1,6 @@
 const debug = require("debug")("eval");
-const { ND_TYPES } = require("./constants");
+const { ND_TYPES, JS_TYPES } = require("./constants");
+const JS_OBJ = require("./object");
 const evaluate = nodes => {
   const createEnv = parentEnv => ({ parentEnv: parentEnv || null, table: {} });
   const put = (env, name, value) => (env.table[name] = value);
@@ -29,11 +30,33 @@ const evaluate = nodes => {
     debug(`evalNode: ${node.type}`);
     switch (node.type) {
       case ND_TYPES.NUMBER:
-        return node.value;
+        return JS_OBJ.numberObject(node.value);
       case ND_TYPES.ADD:
-        return evalNode(env, node.left) + evalNode(env, node.right);
+        return JS_OBJ.numberObject(
+          evalNode(env, node.left).value + evalNode(env, node.right).value
+        );
       case ND_TYPES.MUL:
-        return evalNode(env, node.left) * evalNode(env, node.right);
+        return JS_OBJ.numberObject(
+          evalNode(env, node.left).value * evalNode(env, node.right).value
+        );
+      case ND_TYPES.EQ: {
+        // https://tc39.github.io/ecma262/#sec-abstract-equality-comparison
+        const left = evalNode(env, node.left);
+        const right = evalNode(env, node.right);
+        if (left.type === right.type && left.value === right.value) {
+          return JS_OBJ.TRUE;
+        }
+        return JS_OBJ.FALSE;
+      }
+      case ND_TYPES.NEQ: {
+        // https://tc39.github.io/ecma262/#sec-abstract-equality-comparison
+        const left = evalNode(env, node.left);
+        const right = evalNode(env, node.right);
+        if (left.type === right.type && left.value === right.value) {
+          return JS_OBJ.FALSE;
+        }
+        return JS_OBJ.TRUE;
+      }
       case ND_TYPES.ASSIGN: {
         const ident = evalLValue(env, node.left);
         const value = evalNode(env, node.right);
