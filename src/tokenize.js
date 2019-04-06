@@ -86,8 +86,7 @@ const tokenize = src => {
       continue;
     }
 
-    console.error(`unexpected token '${c}', charCode: ${charCode}`);
-    process.exit(1);
+    throw new Error(`unexpected token '${c}', charCode: ${charCode}`);
   }
   return tokens;
 };

@@ -16,9 +16,10 @@ blcok: '{' stmt '}'
 
 cmp: add '==' add
 cmp: add '!=' add
-cmp: add
+cmp: add 
 
 add: assign '+' add
+add: assign '.' term // IDENTIFIER
 add: assign
 
 assign: mul '=' add
@@ -28,10 +29,25 @@ mul: term '*' mul
 mul: term
 
 term: '(' add ')'
-term: [0-9]* //number
+term: num
+term: obj
 term: IDENTIFIER '++'
 term: IDENTIFIER '--'
 term: IDENTIFIER
+
+obj: { prop_def }
+
+prop_def: IDENTIFIER ':' cmp ',' prop_def
+prop_def: IDENTIFIER ':' cmp ',' 
+prop_def: '[' cmp ']' ':' cmp ',' prop_def
+prop_def: '[' cmp ']' ':' cmp ',' 
+prop_def: IDENTIFIER ':' cmp
+prop_def: e
+
+
+
+num: [0-9]* 
+num: -[0-9]* 
 
 */
 const parse = tks => {
@@ -68,10 +84,22 @@ const parse = tks => {
       if (!consume(TK_TYPES.RPAREN)) unexpectedTokenError();
       return node;
     }
-    const tk = tks[i];
+    let tk = tks[i];
     if (consume(TK_TYPES.NUMBER)) {
       debug("term: number found");
       return { type: ND_TYPES.NUMBER, value: tk.value };
+    }
+    if (consume(TK_TYPES.LBRACKET)) {
+      tk = tks[i];
+      const props = [];
+      while (consume(TK_TYPES.IDENT)) {
+        if (!consume(TK_TYPES.COLON)) unexpectedTokenError();
+        props.push({ key: tk.value, value: cmp() });
+        tk = tks[i];
+        if (!consume(TK_TYPES.COMMA)) break;
+      }
+      if (!consume(TK_TYPES.RBRACKET)) unexpectedTokenError();
+      return { type: ND_TYPES.OBJECT, props: props };
     }
     if (consume(TK_TYPES.IDENT)) {
       debug("term: ident found");
@@ -103,6 +131,10 @@ const parse = tks => {
       const rhs = assign();
       return { type: ND_TYPES.ASSIGN, right: rhs, left: lhs };
     }
+    if (consume(TK_TYPES.DOT)) {
+      const rhs = term();
+      return { type: ND_TYPES.GET, right: rhs, left: lhs };
+    }
     return lhs;
   };
   const add = () => {
@@ -113,6 +145,11 @@ const parse = tks => {
       const rhs = add();
       if (rhs == null) unexpectedTokenError();
       return { type: ND_TYPES.ADD, right: rhs, left: lhs };
+    }
+    if (consume(TK_TYPES.DOT)) {
+      const tk = tks[i];
+      if (!consume(TK_TYPES.IDENT)) unexpectedTokenError();
+      return { type: ND_TYPES.GET, ref: tk.value };
     }
     return lhs;
   };

@@ -10,6 +10,7 @@ const TK_TYPES = genConst("TK", [
   "ASSIGN",
   "IDENT",
   "SEMI",
+  "COLON",
   "IF",
   "ELSE",
   "WHILE",
@@ -18,6 +19,8 @@ const TK_TYPES = genConst("TK", [
   "RBRACKET",
   "INC",
   "DEC",
+  "DOT",
+  "COMMA",
 ]);
 
 const TK_CONSTS = {
@@ -26,12 +29,15 @@ const TK_CONSTS = {
   "(": TK_TYPES.LPAREN,
   ")": TK_TYPES.RPAREN,
   ";": TK_TYPES.SEMI,
+  ":": TK_TYPES.COLON,
   if: TK_TYPES.IF,
   else: TK_TYPES.ELSE,
   for: TK_TYPES.FOR,
   while: TK_TYPES.WHILE,
   "{": TK_TYPES.LBRACKET,
   "}": TK_TYPES.RBRACKET,
+  ".": TK_TYPES.DOT,
+  ",": TK_TYPES.COMMA,
 };
 const TK_CONST_KEYS = Object.keys(TK_CONSTS);
 
@@ -49,6 +55,9 @@ const ND_TYPES = genConst("ND", [
   "BLOCK",
   "DEC",
   "INC",
+  "GET",
+  "SET",
+  "OBJECT",
 ]);
 
 const JS_TYPES = genConst("JS", [

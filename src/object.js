@@ -26,6 +26,11 @@ const stringObeject = v => ({
   value: v,
 });
 
+const objectObject = props => ({
+  type: JS_TYPES.OBJECT,
+  props: props,
+});
+
 const display = obj => {
   switch (obj.type) {
     case JS_TYPES.NULL:
@@ -37,6 +42,11 @@ const display = obj => {
       return obj.value;
     case JS_TYPES.BOOLEAN:
       return obj.value ? "true" : "false";
+    case JS_TYPES.OBJECT:
+      return `{${Object.keys(obj.props).reduce(
+        (acc, k) => `${k}: ${display(obj.props[k])}`,
+        ""
+      )}}`;
     default:
       console.error(`unexpected object ${JSON.stringify(obj)}`);
       process.exit(1);
@@ -51,5 +61,6 @@ module.exports = {
   booleanObject,
   numberObject,
   stringObeject,
+  objectObject,
   display,
 };

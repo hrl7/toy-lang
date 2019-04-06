@@ -39,11 +39,14 @@ tests = {
   "a = 0; a--": 0,
   "a = 0; a--; a": -1,
   "a = 0; a--; a--; a": -2,
+  "a = {}; a": {},
+  "a = {b: 1}; a.b": 1,
+  'a = {b: 1}; a["b"]': 1,
 };
 
 Object.keys(tests).forEach(t => {
   const expected = tests[t];
-  test(`${t} => ${expected}`, () => {
-    expect(run(t)).toBe(expected);
+  test(`${t} => ${JSON.stringify(expected)}`, () => {
+    expect(run(t)).toEqual(expected);
   });
 });

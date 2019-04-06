@@ -9,12 +9,10 @@ const evaluate = nodes => {
     return v;
   };
   const unexpectedNodeError = node => {
-    console.error(`got unexpected node ${JSON.stringify(node)}`);
-    process.exit(1);
+    throw new Error(`got unexpected node ${JSON.stringify(node)}`);
   };
   const referenceError = name => {
-    console.error(`reference error: ${name} is not defined`);
-    process.exit(1);
+    throw new Error(`reference error: ${name} is not defined`);
   };
 
   const evalLValue = (env, node) => {
@@ -39,6 +37,14 @@ const evaluate = nodes => {
         return JS_OBJ.numberObject(
           evalNode(env, node.left).value * evalNode(env, node.right).value
         );
+      case ND_TYPES.OBJECT: {
+        return JS_OBJ.objectObject(
+          node.props.reduce(
+            (acc, o) => ({ ...acc, [o.key]: evalNode(env, o.value) }),
+            {}
+          )
+        );
+      }
       case ND_TYPES.EQ: {
         // https://tc39.github.io/ecma262/#sec-abstract-equality-comparison
         const left = evalNode(env, node.left);
@@ -100,6 +106,12 @@ const evaluate = nodes => {
         const prevVal = value.value;
         value.value--;
         return JS_OBJ.numberObject(prevVal);
+      }
+      case ND_TYPES.GET: {
+        const ident = evalLValue(env, node.left);
+        const key = evalLValue(env, node.right);
+        const obj = get(env, ident);
+        return obj.props[key];
       }
       default:
         unexpectedNodeError(node);
