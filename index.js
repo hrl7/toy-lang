@@ -79,7 +79,7 @@ const parse = tks => {
     const lhs = mul();
     if (lhs == null) unexpectedTokenError();
     if (consume(TK_TYPES.OP_ADD)) {
-      const rhs = mul();
+      const rhs = add();
       if (rhs == null) unexpectedTokenError();
       return { type: ND_TYPES.ADD, right: rhs, left: lhs };
     }
@@ -94,6 +94,33 @@ const parse = tks => {
     i++;
   }
   return nodes;
+};
+
+const evaluate = nodes => {
+  const unexpectedNodeError = node => {
+    console.error(`got unexpected node ${JSON.stringify(node)}`);
+    process.exit(1);
+  };
+  const evalNode = node => {
+    switch (node.type) {
+      case ND_TYPES.NUMBER:
+        return node.value;
+      case ND_TYPES.ADD:
+        return evalNode(node.left) + evalNode(node.right);
+      case ND_TYPES.MUL:
+        return evalNode(node.left) * evalNode(node.right);
+      default:
+        unexpectedNodeError(node);
+    }
+  };
+
+  let i = 0,
+    lastValue;
+  while (i < nodes.length) {
+    lastValue = evalNode(nodes[i]);
+    i++;
+  }
+  return lastValue;
 };
 
 const main = () => {
@@ -111,7 +138,8 @@ const main = () => {
   const nodes = parse(tokens);
   console.log("Parsed");
   console.log(JSON.stringify(nodes, null, 2));
-  console.log("-------");
+  console.log("-------\nEval");
+  console.log(`=> ${evaluate(nodes)}`);
 };
 
 main();
